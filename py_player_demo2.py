@@ -87,10 +87,16 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         print(self.player.availableMetaData())
 
     def playVideo(self):
-        self.player.play()
+        # print(self.duration,999999999999999)
+        # print(self.MediaStatus,3423)
+        print(self.player.state(),33333333333333333)
 
-    def pauseVideo(self):
-        self.player.pause()
+        self.player.play()
+    def pauseVideo(self): ########=========修改为点暂停按钮就是启动和暂停功能.
+        if self.player.state() != 1:
+            self.player.play()
+        else:
+            self.player.pause()
 
     def videoDoubleClicked(self, text):
 

@@ -1,3 +1,12 @@
+# 2023-07-02,13点25 时间轴修改成帧数.方便后期定位. 现实时间我不关心, 我只用帧来衡量时间
+#=======下一个就是力度问题. 每次拖拽的力度只能百分之1, 这个很烦.解决了用self.maxi 参数设置. 越大力度月小.
+
+# mp4电影资源下载:http://www.8080s.tv/dm/3108
+# 测试:  https://huggingface.co/datasets/zhangbo2008/one_piece_1066/resolve/main/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%AC%AC1066%E9%9B%86.mp4   可以wget直接下载.
+
+mov=r'E:\360MoveData\Users\Administrator\Desktop\海贼王第1066集.mp4'
+
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import *
 from PyQt5.QtGui import *
@@ -12,6 +21,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
+        self.maxi=1000 #===这个控制整体切分力度. 我感觉把一个视频切1000分足够细化了.
         self.sld_video_pressed=False  #判断当前进度条识别否被鼠标点击
         self.videoFullScreen = False   # 判断当前widget是否全屏
         self.videoFullScreenWidget = myVideoWidget()   # 创建一个全屏的widget
@@ -43,7 +53,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         import PyQt5.QtCore as QtCore
         #=========默认打开一个.方便调试#=========================这里进行初始化调试!!!!!!!!!!!!!!!!!
         if 1:
-            stream = QtCore.QUrl.fromLocalFile("sample.mp4")
+            stream = QtCore.QUrl.fromLocalFile(mov)
             self.player.setMedia(QMediaContent(stream))
 
             ######===========
@@ -54,8 +64,12 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
         # print('当前文件的时间', self.player.duration())
         # self.player.durationChanged.connect(lambda x:print(x))
-        print(self.sld_video.maximum(),11111111111111)
-        print(self.sld_video.minimum(),22222222)
+        
+        self.sld_video.setMaximum(self.maxi)
+        self.sld_video.setMinimum(0)  #控制切分力度的.
+        
+        print(self.sld_video.maximum(),222222222222222222222222222222222222222222222222)
+        print(self.sld_video.minimum(),333333333333333333333333333333333333)
         print(self.sld_video.setSingleStep(1))
         print(self.player.duration(), 'begin_duration')
         sav_dur=0
@@ -68,7 +82,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         screen.grabWindow(self.wgt_video.winId()).save(cast_jpg)
 
     def volumeChange(self, position):
-        volume= round(position/self.sld_audio.maximum()*100)
+        volume= round(position/self.sld_audio.maximum()*self.maxi)
         print("vlume %f" %volume)
         self.player.setVolume(volume)
         self.lab_audio.setText("volume:"+str(volume)+"%")
@@ -79,19 +93,24 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         if 1:  # 开始播放后才允许进行跳转
             print(11111111111111111, self.player.duration())
             
-            video_position = int((position / 100) * self.player.duration())
+            video_position = int((position / self.maxi) * self.player.duration())
             self.player.setPosition(video_position)
-            self.lab_video.setText("%.2f%%" % position)
+            self.lab_video.setText( str((position)))
         else:
             self.sld_video.setValue(0)
 
     def moveSlider(self, position):
         self.sld_video_pressed = True
+        print('moveslider',position)
         # print(1111111111111111111111111111111111,213123123123123)
         if 1:  # 开始播放后才允许进行跳转
-            video_position = int((position / 100) * self.player.duration())
+            print('11111111vvvvvvvvvvv',position)
+            video_position = int((position / self.maxi) * self.player.duration())
+            print('vvvvvvvvvvvvv',video_position)
             self.player.setPosition(video_position)
-            self.lab_video.setText("%.2f%%" % position)
+
+            self.vidoeLength = self.player.duration() + 0.00000001
+            self.lab_video.setText( str(int((position)/self.maxi*self.vidoeLength) ))
 
     def pressSlider(self):
         self.sld_video_pressed = True
@@ -100,7 +119,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
     def releaseSlider(self):
         self.sld_video_pressed = False
 
-    def changeSlide(self, position):  #进度条根据时间自己更新.
+    def changeSlide(self, position):  #视频流逝时候更新这个函数..
         # print('check, duration', self.player.duration())
         
         # self.sav_dur = self.player.duration()  #=====每步都更新.把变量给别人用.
@@ -115,10 +134,11 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
             self.flag=0
 
         if not self.sld_video_pressed:  # 进度条被鼠标点击时不更新
-            self.vidoeLength = self.player.duration()+0.1
-            self.sld_video.setValue(round((position/self.vidoeLength)*100))
-            #当前位置除以整个长度.
-            self.lab_video.setText("%.2f%%" % ((position/self.vidoeLength)*100))
+            self.vidoeLength = self.player.duration() + 0.00000001
+            print('reunning', position)
+            self.sld_video.setValue(((position/self.vidoeLength)*self.maxi))
+            #当前位置除以整个长度. #========让进度条跟着跑.
+            self.lab_video.setText( str((position)))
 
 
 

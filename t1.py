@@ -1,24 +1,15 @@
-import sys
-
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QAction, QApplication, QLabel, QMainWindow, QMenu
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-    def contextMenuEvent(self, e):
-        context = QMenu(self)
-        context.addAction(QAction("test 1", self))
-        context.addAction(QAction("test 2", self))
-        context.addAction(QAction("test 3", self))
-        context.exec(e.globalPos())
+import time
+import tkinter
+import cv2 as cv # 使用cv2来播放视频.
+import PIL.Image, PIL.ImageTk
 
 
-app = QApplication(sys.argv)
+vid_source = mov = r'E:\360MoveData\Users\Administrator\Desktop\海贼王第1066集.mp4'
+vid=cv.VideoCapture(vid_source)
 
-window = MainWindow()
-window.show()
 
-app.exec()
+cnt=0
+while 1:
+    ret, frame = vid.read()
+    cnt+=1
+print(cnt)

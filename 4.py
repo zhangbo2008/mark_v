@@ -94,7 +94,7 @@ class myvideocapture:
         else:
             return None
 
-vid='E:/video/byxOvuiIJV0.mp4'
+vid=mov=r'E:\360MoveData\Users\Administrator\Desktop\海贼王第1066集.mp4'
 if __name__ == '__main__':
     app = App(tkinter.Tk(), "tkinter player",vid)
 

@@ -5,6 +5,7 @@
 # 测试的海贼王1066视频:  https://huggingface.co/datasets/zhangbo2008/one_piece_1066/resolve/main/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%AC%AC1066%E9%9B%86.mp4   可以wget直接下载.
 
 mov=r'E:\360MoveData\Users\Administrator\Desktop\海贼王第1066集.mp4'
+mov=r'sample.mp4'
 
 
 from PyQt5.QtWidgets import *

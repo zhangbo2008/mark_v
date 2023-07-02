@@ -15,11 +15,15 @@ English version Readme:
 
 为了网上大家都能用,把界面语言改成了英语.
 
+界面战士:
 
 
 
+![image](%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230702152846.png)
 
 
+
+参考项目:
 # PyQt_Video_Demo
 This is a demo of using PyQt to design a simple video player
 Detail description is in my blog https://blog.csdn.net/u012552296/article/details/89295273

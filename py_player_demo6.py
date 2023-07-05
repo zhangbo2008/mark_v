@@ -3,9 +3,26 @@
 
 # mp4电影资源下载:http://www.8080s.tv/dm/3108
 # 测试的海贼王1066视频:  https://huggingface.co/datasets/zhangbo2008/one_piece_1066/resolve/main/%E6%B5%B7%E8%B4%BC%E7%8E%8B%E7%AC%AC1066%E9%9B%86.mp4   可以wget直接下载.
-
+#2023-07-05,19点47   添加键盘左右箭头对于时间的控制.
 mov=r'E:\人生路不熟.mp4'
 # mov=r'sample.mp4'
+#==========qt官方文档:https://doc.qt.io/qtforpython-5/
+'''
+#========整个qt相应逻辑:
+# 1. player.positionChanged 控制视频自动播放个时候的进度条逻辑.
+        只有当鼠标不点击进度条的时候我们才进行更新.
+        如果鼠标点击进度条那么我们就会调用clickedSlider函数,这时player会锁定位置了.setposition
+        如果鼠标拖动进度条我们会调用moveslider函数,player也会相应锁定新的图片位置.
+        (整个逻辑很完美)
+  2. 键盘调整------>调用ClickedValue2----->调用moveslider函数.
+
+
+'''
+
+
+
+
+
 
 
 from PyQt5.QtWidgets import *
@@ -20,9 +37,11 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 class myMainWindow(Ui_MainWindow, QMainWindow):
     from PyQt5 import QtCore
+
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
+        self.for_key=0
         self.front = []
         self.end = []
         self.tmpframe=0
@@ -90,13 +109,28 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         self.videoFullScreenWidget.doubleClickedItem.connect(self.videoDoubleClicked)  #双击响应
         self.wgt_video.doubleClickedItem.connect(self.videoDoubleClicked)  #双击响应
         
-#============进度条的控制是我们要做的核心.
+#============进度条的控制是我们要做的核心.!!!!!!!!!!!!!!最核心的是下面4个connect的4个函数
         self.sld_video.setTracking(True)
         self.flag=1
         self.sld_video.sliderReleased.connect(self.releaseSlider)
         self.sld_video.sliderPressed.connect(self.pressSlider)
         self.sld_video.sliderMoved.connect(self.moveSlider)   # 进度条拖拽跳转
         self.sld_video.ClickedValue.connect(self.clickedSlider)  # 进度条点击跳转
+        self.sld_video.ClickedValue2.connect(self.moveSlider)  # 进度条点击跳转
+        
+        # def fun(a):
+        #     self.sld_video.super().keyPressEvent(QKeyEvent)
+        #     print(a)
+        # self.sld_video.keyPressEvent = fun
+        # print(self.sld_video.keyPressEvent,3333333333)
+        
+
+
+
+
+
+
+
 #参考:https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QAbstractSlider.html#qabstractslider   好资料:https://zhuanlan.zhihu.com/p/75657373
 
 
@@ -119,12 +153,16 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         
         self.sld_video.setMaximum(self.maxi)
         self.sld_video.setMinimum(0)  #控制切分力度的.
+        self.sld_video.setTickInterval(10)
+        self.sld_video.setSingleStep(1) #=======很奇怪这里居然是2. 才表示1000分支1.....
+        self.sld_video.setPageStep(20) #=======很奇怪这里居然是2. 才表示1000分支1.....
+        print(self.sld_video.singleStep(),33333333333333)
+        # print(self.sld_video.maximum(),222222222222222222222222222222222222222222222222)
+        # print(self.sld_video.minimum(),333333333333333333333333333333333333)
+
+        # print(self.player.duration(), 'begin_duration')
+        sav_dur = 0
         
-        print(self.sld_video.maximum(),222222222222222222222222222222222222222222222222)
-        print(self.sld_video.minimum(),333333333333333333333333333333333333)
-        print(self.sld_video.setSingleStep(1))
-        print(self.player.duration(), 'begin_duration')
-        sav_dur=0
 
     _translate = QtCore.QCoreApplication.translate
     def btn_front1(self):
@@ -133,13 +171,13 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
 
         self.helper.setText(_translate("MainWindow", f"左{len(self.front)} 右{len(self.end)}"))
-        print('fornt',self.front)
+        # print('fornt',self.front)
 
     def btn_end1(self):
         _translate = QtCore.QCoreApplication.translate
         self.end.append(self.tmpframe)
         self.helper.setText(_translate("MainWindow", f"左{len(self.front)} 右{len(self.end)}"))
-        print('end',self.end)
+        # print('end',self.end)
 
     def btn_s1(self):
         _translate = QtCore.QCoreApplication.translate
@@ -156,38 +194,62 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
     def volumeChange(self, position):
         volume= round(position/self.sld_audio.maximum()*self.maxi)
-        print("vlume %f" %volume)
+        # print("vlume %f" %volume)
         self.player.setVolume(volume)
         self.lab_audio.setText("volume:"+str(volume)+"%")
+    def clickedSlider2(self, position):
+        video_position = int((position / self.maxi) * self.player.duration())
+        print(video_position, '调试!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        # self.for_key=1
+        self.player.setPosition(video_position) 
+        video_position = int((position / self.maxi) * self.player.duration())
+        
+        self.lab_video.setText( str((video_position)))
+        print('你当前传入的位置是.', position)
+        # self.for_key=0
+
+
+
+
+
+
 
     def clickedSlider(self, position):
+
         print('你当前传入的位置是.', position)
-        print(self.sld_video.hasTracking(),9999999999)
+        # print(self.sld_video.hasTracking(),9999999999)
         if 1:  # 开始播放后才允许进行跳转
             print(11111111111111111, self.player.duration())
             
             video_position = int((position / self.maxi) * self.player.duration())
+            print(video_position,'调试!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             self.player.setPosition(video_position)
-            self.lab_video.setText( str((position)))
+            self.lab_video.setText( str((video_position)))
         else:
             self.sld_video.setValue(0)
-        self.tmpframe=position
+        self.tmpframe = position
+        
+
+
+
+
     def moveSlider(self, position):
         self.sld_video_pressed = True
-        print('moveslider',position)
+        # print('moveslider',position)
         # print(1111111111111111111111111111111111,213123123123123)
         if 1:  # 开始播放后才允许进行跳转
-            print('11111111vvvvvvvvvvv',position)
+            # print('11111111vvvvvvvvvvv',position)
             video_position = int((position / self.maxi) * self.player.duration())
-            print('vvvvvvvvvvvvv',video_position)
+            # print('vvvvvvvvvvvvv',video_position)
             self.player.setPosition(video_position)
 
             self.vidoeLength = self.player.duration() + 0.00000001
             self.lab_video.setText( str(int((position)/self.maxi*self.vidoeLength) ))
-        self.tmpframe=position
+        self.tmpframe = position
+    
     def pressSlider(self):
         self.sld_video_pressed = True
-        print("pressed")
+        # print("pressed")
 
     def releaseSlider(self):
         self.sld_video_pressed = False
@@ -201,14 +263,15 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
             self.sld_video.setMaximu=self.player.duration()
             self.sld_video.setRange=(0,self.player.duration())
             self.sld_video.setTickPosition='QSlider::TicksAbove'
-            print(self.sld_video.setMaximu,88888888888888888888888)
+            # print(self.sld_video.setMaximu,88888888888888888888888)
 
 
             self.flag=0
-
-        if not self.sld_video_pressed:  # 进度条被鼠标点击时不更新
+        print(self.for_key,333333333333333333333333333333333333333333)
+        if not self.sld_video_pressed and not self.for_key:  # 进度条被鼠标点击时不更新
+            print('触发了进度条')
             self.vidoeLength = self.player.duration() + 0.00000001
-            print('reunning', position)
+            # print('reunning999999999999999999999999999999999999999999999999', position)
             self.sld_video.setValue(((position/self.vidoeLength)*self.maxi))
             #当前位置除以整个长度. #========让进度条跟着跑.
             self.lab_video.setText(str((position)))
@@ -225,16 +288,16 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
     def openVideoFile(self):
         self.player.setMedia(QMediaContent(QFileDialog.getOpenFileUrl()[0]))  # 选取视频文件
         self.player.play()  # 播放视频
-        print(self.player.availableMetaData())
+        # print(self.player.availableMetaData())
 
     def playVideo(self):
         # print(self.duration,999999999999999)
         # print(self.MediaStatus,3423)
-        print(self.player.state(),33333333333333333)
+        (self.player.state())
 
         self.player.play()
     def pauseVideo(self): ########=========修改为点暂停按钮就是启动和暂停功能.
-        if self.player.state() != 1:
+        if self.player.state() != 1: #====如果当前播放状态是精致.
             self.player.play()
         else:
             self.player.pause()

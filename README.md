@@ -1,5 +1,11 @@
 '''
 
+
+updated to py_player_demo6.py
+you can control the slider_time by right_arrow of keyboard(forward 1/1000 of the movie), left_arrow, page_up(forward 5/1000 of the movie), pagedown.
+
+
+
 #最新版本py_player_demo5.Py
 1. 如果打开后视频播放不对, 就安装根目录下的LAVFilters-0.77.2-Installer.exe
 2.使用方法: 

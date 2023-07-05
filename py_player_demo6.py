@@ -15,6 +15,7 @@ mov=r'E:\人生路不熟.mp4'
         如果鼠标拖动进度条我们会调用moveslider函数,player也会相应锁定新的图片位置.
         (整个逻辑很完美)
   2. 键盘调整------>调用ClickedValue2----->调用moveslider函数.
+        (moveslider逻辑确实复杂, 里面涉及一个时间轴是否按下的判断.底层也没完全理解. 以为键盘时候也会判定为按下鼠标所以这时候时间轴CIA不会乱跑.目前这个逻辑完美, 后续更新在看吧.)
 
 
 '''
@@ -253,6 +254,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
     def releaseSlider(self):
         self.sld_video_pressed = False
+        print('触发了release')
 
     def changeSlide(self, position):  #视频流逝时候更新这个函数..
         # print('check, duration', self.player.duration())

@@ -32,13 +32,28 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from GUI import Ui_MainWindow
-from myVideoWidget import myVideoWidget
+from myVideoWidget2 import myVideoWidget
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 class myMainWindow(Ui_MainWindow, QMainWindow):
     from PyQt5 import QtCore
+    ClickedValue2 = pyqtSignal(int)
+    def keyPressEvent(self, event):
+        print(self.value(),3423423423423)
+        print(1111)
+        if event.key()==Qt.Key_Right:
+            self.setValue(self.value() + 1)
+            print(self.value(),3423423423423)
 
+        elif event.key()==Qt.Key_Left:
+            self.setValue(self.value() - 1)
+            print(self.value(),3423423423423)
+        if event.key() == Qt.Key_PageDown:
+            self.setValue(self.value() - 5)
+        if event.key()==Qt.Key_PageUp:
+            self.setValue(self.value() + 5)
+        self.ClickedValue2.emit(self.value())
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
@@ -93,7 +108,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
 
 
-        self.maxi=1000 #===这个控制整体切分力度. 我感觉把一个视频切1000分足够细化了.
+        self.maxi=2000 #===这个控制整体切分力度. 我感觉把一个视频切1000分足够细化了.
         self.sld_video_pressed=False  #判断当前进度条识别否被鼠标点击
         self.videoFullScreen = False   # 判断当前widget是否全屏
         self.videoFullScreenWidget = myVideoWidget()   # 创建一个全屏的widget
@@ -102,7 +117,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
 
         self.player.setVideoOutput(self.wgt_video)  # 视频播放输出的widget，就是上面定义的
         self.btn_open.clicked.connect(self.openVideoFile)   # 打开视频文件按钮
-        self.btn_play.clicked.connect(self.playVideo)       # play
+        # self.btn_play.clicked.connect(self.playVideo)       # play
         self.btn_stop.clicked.connect(self.pauseVideo)       # pause
         self.btn_cast.clicked.connect(self.castVideo)        # 视频截图
         self.player.positionChanged.connect(self.changeSlide)  # change Slide
@@ -194,7 +209,7 @@ class myMainWindow(Ui_MainWindow, QMainWindow):
         screen.grabWindow(self.wgt_video.winId()).save(cast_jpg)
 
     def volumeChange(self, position):
-        volume= round(position/self.sld_audio.maximum()*self.maxi)
+        volume= round(position/self.sld_audio.maximum()*100)
         # print("vlume %f" %volume)
         self.player.setVolume(volume)
         self.lab_audio.setText("volume:"+str(volume)+"%")

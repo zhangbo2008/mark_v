@@ -1,5 +1,5 @@
 '''
-
+加入空格支持, press space to  play/pause the video.
 
 updated to py_player_demo6.py
 you can control the slider_time by right_arrow of keyboard(forward 1/1000 of the movie), left_arrow, page_up(forward 5/1000 of the movie), pagedown.
@@ -43,3 +43,14 @@ simple video player result:
 ![GUI of vidow player](https://github.com/taroshi/PyQt_Video_Demo/blob/master/result.png)
 #
 '''
+
+
+
+
+
+
+
+python 打包.
+
+
+nuitka --standalone --windows-disable-console --mingw64 --nofollow-imports --show-memory --show-progress --plugin-enable=qt-plugins --include-qt-plugins=sensible,styles --follow-import-to=need --output-dir=o py_player_demo6.py

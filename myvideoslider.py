@@ -4,6 +4,7 @@ import PyQt5
 class myVideoSlider(QSlider):
     ClickedValue = pyqtSignal(int) #把时间mousepressevent, 绑定到clickedvalue上. 然后我们住函数再把clickedvalue发送后的效果函数设置为,player更新为新的索引位置.
     ClickedValue2 = pyqtSignal(int) #把时间mousepressevent, 绑定到clickedvalue上. 然后我们住函数再把clickedvalue发送后的效果函数设置为,player更新为新的索引位置.
+    ClickedValue3 = pyqtSignal(int) #把时间mousepressevent, 绑定到clickedvalue上. 然后我们住函数再把clickedvalue发送后的效果函数设置为,player更新为新的索引位置.
 
     def __init__(self, father):
         super().__init__(Qt.Horizontal, father)
@@ -18,22 +19,36 @@ class myVideoSlider(QSlider):
         value = round(value / self.width() * self.maximum())  # 根据鼠标点击的位置和slider的长度算出百分比
         # print('鼠标发送',value)
         self.ClickedValue.emit(value)
-
-    def keyPressEvent(self, event):
-        print(self.value(),3423423423423)
+    if 1:
+     def keyPressEvent(self, event):
+        # print(Qt.event.key())
+        print(event.key(),3423423423423)
         print(1111)
         if event.key()==Qt.Key_Right:
             self.setValue(self.value() + 1)
             print(self.value(),3423423423423)
-
-        elif event.key()==Qt.Key_Left:
+            self.ClickedValue2.emit(self.value() + 1)
+            return 
+        if event.key() == Qt.Key_Left:
+            print('按下左')
             self.setValue(self.value() - 1)
-            print(self.value(),3423423423423)
+            print(self.value(), 3423423423423)
+            self.ClickedValue2.emit(self.value() - 1)
+            return 
         if event.key() == Qt.Key_PageDown:
             self.setValue(self.value() - 5)
+            self.ClickedValue2.emit(self.value() - 5)
+            return 
         if event.key()==Qt.Key_PageUp:
             self.setValue(self.value() + 5)
-        self.ClickedValue2.emit(self.value())
+            self.ClickedValue2.emit(self.value() + 5)
+            return 
+        # print(999999999999999999,event.key(),Qt.Key_Backspace)
+        if event.key() == 32:
+            print('按下backspace')
+            self.ClickedValue3.emit(self.value())
+            return 
+
     if 0:
      def keyPressEvent(self, QKeyEvent):
         # print('触发前的位置',self.value())
